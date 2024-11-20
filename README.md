@@ -1,0 +1,1 @@
+Instantiations of the code visualize a solar system of some sun(s), planets, and moons in a 2D view. It is planned to initialize the visualization with a list of celestial bodies and some simulation parameters (e.g. the ratio between real and simulation time.
