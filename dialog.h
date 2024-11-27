@@ -6,8 +6,8 @@
 #define INITIAL_SCALE 2.0e-6        // pixel / km
 // #define TIME_STEP 10.0
 #define TIME_STEP 500.0
-// #define TIME_LAPSE 1000.0
-#define TIME_LAPSE 1.0
+#define TIME_LAPSE 1000.0
+// #define TIME_LAPSE 1.0
 
 #include <QDialog>
 #include <QtGui>

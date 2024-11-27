@@ -3,7 +3,6 @@
 
 #include "celestialbody.h"
 #include "universe.h"
-#include "inertialsystem.h"
 
 #include <QDebug>
 
@@ -13,8 +12,8 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    theUniverse = new Universe();
     scene = new QGraphicsScene(this);
+    theUniverse = new Universe(scene);
     ui->graphicsView->setScene(scene);
 
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
@@ -28,14 +27,15 @@ Dialog::Dialog(QWidget *parent) :
     InertialSystem *earthSystem = new InertialSystem(POSITION_X_EARTH, POSITION_Y_EARTH,
                                                      ANGULAR_VELOCITY_EARTH * 360.0 / 2.0 / PI, TIME_STEP, TIME_LAPSE);
 */
-    CelestialBody *sun = new CelestialBody(MASS_SUN, RADIUS_SUN, POSITION_X_SUN, POSITION_Y_SUN,
-                                             0.0, Qt::darkYellow, 10.0, TIME_STEP, TIME_LAPSE);
-//    CelestialBody *origin = new CelestialBody(MASS_SUN, RADIUS_SUN / 2.0, POSITION_X_SUN, POSITION_Y_SUN,
-//                                              0.0, Qt::black, 10.0, TIME_STEP, TIME_LAPSE);
-    CelestialBody *earth = new CelestialBody(MASS_EARTH, RADIUS_EARTH, POSITION_X_EARTH, POSITION_Y_EARTH,
-                                             0.0, Qt::blue, 10.0, TIME_STEP, TIME_LAPSE);
-    CelestialBody *moon = new CelestialBody(MASS_MOON, RADIUS_MOON, POSITION_X_MOON, POSITION_Y_MOON,
-                                            0.0, Qt::darkGray, 10.0, TIME_STEP, TIME_LAPSE);
+    CelestialBody *sun = new CelestialBody("Sun", MASS_SUN, RADIUS_SUN,
+                                           POSITION_X_SUN, POSITION_Y_SUN, VELOCITY_X_SUN, VELOCITY_Y_SUN,
+                                           Qt::darkYellow, 10.0, TIME_STEP, TIME_LAPSE);
+    CelestialBody *earth = new CelestialBody("Earth", MASS_EARTH, RADIUS_EARTH,
+                                             POSITION_X_EARTH, POSITION_Y_EARTH, VELOCITY_X_EARTH, VELOCITY_Y_EARTH,
+                                             Qt::blue, 10.0, TIME_STEP, TIME_LAPSE);
+    CelestialBody *moon = new CelestialBody("Moon", MASS_MOON, RADIUS_MOON,
+                                            POSITION_X_MOON, POSITION_Y_MOON, VELOCITY_X_MOON, VELOCITY_Y_MOON,
+                                            Qt::darkGray, 10.0, TIME_STEP, TIME_LAPSE);
 //    earthSystem->addToGroup(earth);
 /*
     QPen pen(Qt::black);
@@ -49,7 +49,7 @@ Dialog::Dialog(QWidget *parent) :
     scene->addItem(moon);
 
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), scene, SLOT(advance()));
+    connect(timer, SIGNAL(timeout()), theUniverse, SLOT(advance()));
     timer->start(TIME_STEP);
 
     connect(ui->buttonZoomIn, SIGNAL(clicked()), this, SLOT(zoomIn()));

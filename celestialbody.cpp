@@ -2,26 +2,32 @@
 
 #include <QDebug>
 #include <QtMath>
+#include <QVector2D>
 
-CelestialBody::CelestialBody(qreal mass, qreal radius, qreal posX, qreal posY, qreal av, QColor color,
-                             qreal sizefactor, qreal t_step, qreal t_lapse)
+CelestialBody::CelestialBody(QString s, qreal m, qreal r, qreal posX, qreal posY, qreal vX, qreal vY,
+                             QColor c, qreal sf, qreal t_step, qreal t_lapse)
 {
-    this->mass = mass;
-    this->radius = radius * sizefactor;
-    this->positionX = posX;
-    this->positionY = posY;
-    angle = 0.0;
-    angularV = av;
-    this->color = color;
-    this->dt = t_step * t_lapse / 1000.0;
-    setPos(positionX, positionY);
+    name = s;
+    mass = m;
+    radius = r;
+    position.setX(posX);
+    position.setY(posY);
+    this->velocity.setX(vX);
+    this->velocity.setY(vY);
+    gravity.setX(0.0);
+    gravity.setY(0.0);
+    color = c;
+    virtualSizeF = sf;
+    dt = t_step * t_lapse / 1000.0;
+    setPos(position);
     time = 0.0;
     path.addEllipse(boundingRect());
 }
 
 QRectF CelestialBody::boundingRect() const
 {
-    return QRect(- radius, - radius, 2.0 * radius, 2.0 * radius);
+    qreal virtualRadius = radius * virtualSizeF;
+    return QRect(- virtualRadius, - virtualRadius, 2.0 * virtualRadius, 2.0 * virtualRadius);
 }
 
 void CelestialBody::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -37,5 +43,26 @@ void CelestialBody::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 void CelestialBody::advance(int phase)
 {
     if ( ! phase ) return;
+
+//    QVector2D currentRelativeVelocity;
+    velocity += gravity * dt;
+    position += velocity * dt;
     time += dt;
+    qDebug() << "t = " << time << ": object " << name << ", position = " << position
+             <<  " gravity = " << gravity << " velocity = " << velocity;                // gravity.manhattanLength()
+    setPos(position);
+
+    /*
+        if ( universe->touchedBody(universe->getEarthPosition(), universe->getEarthRadius(), position) ) {
+            universe->intersectionBodySurface(&position, universe->getEarthPosition(),
+                                          universe->getEarthRadius(), position0);
+            velocity.setX(0.0);
+            velocity.setY(0.0);
+            setPos(position);
+        } else {
+            setPos(position);
+            setRotation( absThrust > 0.0 ? angle(currentThrust.toPointF()) : angle(velocity) );
+            qDebug() << "t = " << time << ": object " << id << " position and rotation set";
+        }
+    */
 }

@@ -2,12 +2,9 @@
 
 #include <QtDebug>
 
-Universe::Universe()
+Universe::Universe(QGraphicsScene *scene)
 {
-    positionEarth = QPointF(POSITION_X_EARTH,POSITION_Y_EARTH);
-    positionMoon = QPointF(POSITION_X_MOON,POSITION_Y_MOON);
-    radiusEarth = RADIUS_EARTH;
-    radiusMoon = RADIUS_MOON;
+    theScene = scene;
 }
 
 Universe::~Universe()
@@ -17,10 +14,11 @@ Universe::~Universe()
 
 /*
  * Method calculates the gravity acting on a body in the gravity field of
- * earth and moon.
+ * other celestial bodies.
  */
-QPointF Universe::gravity(QPointF p)
+QPointF Universe::gravity(CelestialBody *body)
 {
+/*
     qreal rxEarth = p.x() - positionEarth.x();
     qreal ryEarth = p.y() - positionEarth.y();
     qreal rxMoon = p.x() - positionMoon.x();
@@ -50,6 +48,8 @@ QPointF Universe::gravity(QPointF p)
         aMoon.setY(f * aabsMoon * qSin(w));
     }
     return aEarth + aMoon;
+*/
+    return QPointF(0.0, 0.0);
 }
 
 /*
@@ -82,17 +82,18 @@ qreal Universe::getMoonRadius() {
 
 /*
  * Method returns the angular velocity of the earth (radians per second).
- */
+
 qreal Universe::getEarthAngularVelocityRadians() {
     return ANGULAR_VELOCITY_EARTH;
 }
+*/
 
 /*
  * Method returns the angular velocity of the earth (degrees per second).
- */
 qreal Universe::getEarthAngularVelocityDegrees() {
     return ANGULAR_VELOCITY_EARTH * 360.0 / 2.0 / PI;
 }
+ */
 
 /*
  * Method calculates whether a position of an object is inside the celestial body.
@@ -165,5 +166,15 @@ qreal Universe::angle(QPointF v) {
         return qRadiansToDegrees(qAtan( v.y() / v.x() )) +
                                         ( v.x() > 0.0 ? 0.0 : ( v.y() > 0.0 ? 180.0 : -180.0 ) );
     }
+}
+
+/*
+ * Method calculates the gravity for each celestial body and
+ * finally invokes the redraw mechanism of the graphics scene.
+ */
+void Universe::advance()
+{
+    // calculate the gravity acting on each celestial body
+    theScene->advance();
 }
 
