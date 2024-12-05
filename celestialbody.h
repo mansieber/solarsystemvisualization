@@ -16,6 +16,10 @@ public:
                   QColor c, qreal sf, qreal t_step, qreal t_lapse);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    QString getName();
+    qreal getMass();
+    QPointF getPosition();
+    void setGravity(QPointF g);
 
 protected:
     void advance(int phase);

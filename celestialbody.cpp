@@ -39,7 +39,42 @@ void CelestialBody::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     painter->drawPath(path);
 }
 
+/*
+ * Return the name of the celestial body.
+ */
+QString CelestialBody::getName()
+{
+    return this->name;
+}
 
+/*
+ * Return the mass of the celestial body (given in 10^9 kg).
+ */
+qreal CelestialBody::getMass()
+{
+    return this->mass;
+}
+
+/*
+ * Return the position of the celestial body.
+ */
+QPointF CelestialBody::getPosition()
+{
+    return this->position;
+}
+
+/*
+ * Set the gravity acting on the celestial body.
+ */
+void CelestialBody::setGravity(QPointF g)
+{
+    this->gravity = g;
+}
+
+/*
+ * Move the celestial body according to the velocity of the body and the gravity of all
+ * other bodies of the universe.
+ */
 void CelestialBody::advance(int phase)
 {
     if ( ! phase ) return;

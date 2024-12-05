@@ -19,6 +19,7 @@ HEADERS += \
     celestialbody.h \
     dialog.h \
     inertialsystem.h \
+    planetpropteries.h \
     universe.h
 
 FORMS += \

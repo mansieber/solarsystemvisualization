@@ -13,6 +13,17 @@ Universe::~Universe()
 }
 
 /*
+ * Method adds a celestial body to the universe. The body will also be added to
+ * the graphics sceen.
+ */
+void Universe::addCelestialBody(CelestialBody *body)
+{
+    bodies.append(body);
+    theScene->addItem(body);
+    qDebug() << body->getName() << " added to universe";
+}
+
+/*
  * Method calculates the gravity acting on a body in the gravity field of
  * other celestial bodies.
  */
@@ -26,6 +37,26 @@ QPointF Universe::gravity(CelestialBody *body)
     if ( ( rxEarth == 0.0 && ryEarth == 0.0 ) || ( rxMoon == 0.0 && ryMoon == 0.0 ) ) {
         return QPoint(INFINITY, INFINITY);
     }
+*/
+    QPointF aTotal(0.0, 0.0);
+    QListIterator<CelestialBody *> i(bodies);
+    while ( i.hasNext() ) {
+        CelestialBody *otherBody = i.next();
+        if ( otherBody != body ) {
+            qreal m = otherBody->getMass();
+            QPointF d = body->getPosition() - otherBody->getPosition();            // distance between bodies
+            qreal aAbs = GRAVITY_CONSTANT * m / ( d.x() * d.x() + d.y() * d.y() );  // absolute gravity
+//            qDebug() << "d(" << otherBody->getName() << ") = " << d << " abs gravity = " << aAbs;
+            QPointF a(0.0, 0.0);
+            qreal w = qAtan(d.y() / d.x());
+            qreal f = d.x() > 0.0 ? -1.0 : 1.0;
+            a.setX(f * aAbs * qCos(w));
+            a.setY(f * aAbs * qSin(w));
+            aTotal += a;
+        }
+    }
+    qDebug() << "a(" << body->getName() << ") = " << aTotal;
+/*
     QPointF aEarth, aMoon;
     qreal aabsEarth = GRAVITY_CONSTANT * MASS_EARTH / ( rxEarth * rxEarth + ryEarth * ryEarth );
     qreal aabsMoon = GRAVITY_CONSTANT * MASS_MOON / ( rxMoon * rxMoon + ryMoon * ryMoon );
@@ -49,35 +80,7 @@ QPointF Universe::gravity(CelestialBody *body)
     }
     return aEarth + aMoon;
 */
-    return QPointF(0.0, 0.0);
-}
-
-/*
- * Method returns the position of earth in the universe.
- */
-QPointF Universe::getEarthPosition() {
-    return positionEarth;
-}
-
-/*
- * Method returns the position of moon in the universe.
- */
-QPointF Universe::getMoonPosition() {
-    return positionMoon;
-}
-
-/*
- * Method returns the radius of earth.
- */
-qreal Universe::getEarthRadius() {
-    return radiusEarth;
-}
-
-/*
- * Method returns the radius of moon.
- */
-qreal Universe::getMoonRadius() {
-    return radiusMoon;
+    return aTotal;
 }
 
 /*
@@ -175,6 +178,11 @@ qreal Universe::angle(QPointF v) {
 void Universe::advance()
 {
     // calculate the gravity acting on each celestial body
-    theScene->advance();
+    QListIterator<CelestialBody *> i(bodies);
+    while ( i.hasNext() ) {
+        CelestialBody *body = i.next();
+        body->setGravity(gravity(body));
+    }
+    theScene->advance();                // move all celestial bodies
 }
 

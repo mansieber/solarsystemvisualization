@@ -4,10 +4,8 @@
 #define MARGIN_X 15.0e6             // km
 #define MARGIN_Y 15.0e6             // km
 #define INITIAL_SCALE 2.0e-6        // pixel / km
-// #define TIME_STEP 10.0
-#define TIME_STEP 500.0
-#define TIME_LAPSE 1000.0
-// #define TIME_LAPSE 1.0
+#define TIME_STEP 50.0
+#define TIME_LAPSE 20000.0
 
 #include <QDialog>
 #include <QtGui>
